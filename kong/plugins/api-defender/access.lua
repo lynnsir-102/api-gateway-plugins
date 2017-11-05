@@ -23,7 +23,6 @@ local function generate_security(args)
 		local salt = "9d39516f2aa889f69842f8cae5af59f5"
 		return ngx.md5(args["udid"] .. args["time"] .. salt)
 	else
-    log.err("校验参数不足")
     resData(constants.DEFENDER_PARAMS_LACKING)
 	end
 end
@@ -65,7 +64,6 @@ local function check_security(deal_args)
 	local server_security = generate_security(deal_args)
     local client_security = deal_args["security"]
     if server_security ~= client_security then
-	    log.err("加密参数不正确")
       resData(constants.DEFENDER_PARAMS_FAIL)
     end
     return true
