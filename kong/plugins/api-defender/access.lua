@@ -1,6 +1,7 @@
 local log = require 'kong.lib.log'
 local params = require 'kong.lib.params'
-
+local resData = require 'kong.lib.response'
+local constants = require 'kong.lib.constants'
 local exception = require 'kong.plugins.api-defender.exception'
 
 local access = {}
@@ -17,17 +18,13 @@ local function postern(key, secret, args)
     return false
 end
 
-local function exit_log(msg)
-	log.err(msg)
-	ngx.exit(500)
-end
-
 local function generate_security(args)
 	if args and args["udid"] and args["time"] then
 		local salt = "9d39516f2aa889f69842f8cae5af59f5"
 		return ngx.md5(args["udid"] .. args["time"] .. salt)
 	else
-		exit_log("校验参数不足")
+    log.err("校验参数不足")
+    resData(constants.DEFENDER_PARAMS_LACKING)
 	end
 end
 
@@ -68,7 +65,8 @@ local function check_security(deal_args)
 	local server_security = generate_security(deal_args)
     local client_security = deal_args["security"]
     if server_security ~= client_security then
-	    exit_log("加密字符串不正确!")
+	    log.err("加密参数不正确")
+      resData(constants.DEFENDER_PARAMS_FAIL)
     end
     return true
 end
