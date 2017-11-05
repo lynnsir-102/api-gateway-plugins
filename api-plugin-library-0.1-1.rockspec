@@ -25,6 +25,7 @@ build = {
   modules = {
     ["kong.lib.log"] = "./kong/lib/log.lua",
     ["kong.lib.params"] = "./kong/lib/params.lua",
+    ["kong.lib.helper"] = "./kong/lib/helper.lua",
     ["kong.lib.request"] = "./kong/lib/request.lua",
     ["kong.lib.response"] = "./kong/lib/response.lua",
     ["kong.lib.constants"] = "./kong/lib/constants.lua"
