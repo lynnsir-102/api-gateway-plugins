@@ -22,8 +22,8 @@ local function exec()
   if headers['Content-Type'] == nil then
     resData(constants.CONTENT_TYPE_WAS_NIL)
   end
-  if headers['Content-Type'] == 'application/x-www-form-urlencoded' or
-  headers['Content-Type'] == 'multipart/form-data' then
+  if string.find(headers['Content-Type'], 'application/x%-www%-form%-urlencoded') or
+  string.find(headers['Content-Type'], 'multipart/form%-data') then
     body = ngxReq.get_post_args()
   else
     body = json.decode(ngxReq.get_body_data())
