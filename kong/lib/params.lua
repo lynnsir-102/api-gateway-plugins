@@ -1,6 +1,5 @@
 local json = require 'json'
 
-local log = require 'kong.lib.log'
 local resData = require 'kong.lib.response'
 local constants = require 'kong.lib.constants'
 

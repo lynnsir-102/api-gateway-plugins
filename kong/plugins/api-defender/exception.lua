@@ -1,5 +1,5 @@
 local exception_url = {
-	"/lynn/exception","/lynn/exception2"
+    "/lynn/exception","/lynn/exception2"
 	}
 
 return exception_url
