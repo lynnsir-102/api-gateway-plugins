@@ -10,64 +10,64 @@ local access = require "kong.plugins.api-defender.access"
 -- Base Plugin handler, it's only role is to instanciate itself
 -- with a name. The name is your plugin name as it will be printed in the logs.
 function CustomHandler:new()
-  CustomHandler.super.new(self, "api-defender")
+	CustomHandler.super.new(self, "api-defender")
 end
 
 function CustomHandler:init_worker(config)
-  -- Eventually, execute the parent implementation
-  -- (will log that your plugin is entering this context)
-  CustomHandler.super.init_worker(self)
+	-- Eventually, execute the parent implementation
+	-- (will log that your plugin is entering this context)
+	CustomHandler.super.init_worker(self)
 
-  -- Implement any custom logic here
+	-- Implement any custom logic here
 end
 
 function CustomHandler:certificate(config)
-  -- Eventually, execute the parent implementation
-  -- (will log that your plugin is entering this context)
-  CustomHandler.super.certificate(self)
+	-- Eventually, execute the parent implementation
+	-- (will log that your plugin is entering this context)
+	CustomHandler.super.certificate(self)
 
-  -- Implement any custom logic here
+	-- Implement any custom logic here
 end
 
 function CustomHandler:rewrite(config)
-  -- Eventually, execute the parent implementation
-  -- (will log that your plugin is entering this context)
-  CustomHandler.super.rewrite(self)
+	-- Eventually, execute the parent implementation
+	-- (will log that your plugin is entering this context)
+	CustomHandler.super.rewrite(self)
 
-  -- Implement any custom logic here
+	-- Implement any custom logic here
 end
 
 function CustomHandler:access(config)
-  -- Eventually, execute the parent implementation
-  -- (will log that your plugin is entering this context)
-  CustomHandler.super.access(self)
+	-- Eventually, execute the parent implementation
+	-- (will log that your plugin is entering this context)
+	CustomHandler.super.access(self)
 
-  -- Implement any custom logic here
-  access.execute(config)
+	-- Implement any custom logic here
+	access.execute(config)
 end
 
 function CustomHandler:header_filter(config)
-  -- Eventually, execute the parent implementation
-  -- (will log that your plugin is entering this context)
-  CustomHandler.super.header_filter(self)
+	-- Eventually, execute the parent implementation
+	-- (will log that your plugin is entering this context)
+	CustomHandler.super.header_filter(self)
 
-  -- Implement any custom logic here
+	-- Implement any custom logic here
 end
 
 function CustomHandler:body_filter(config)
-  -- Eventually, execute the parent implementation
-  -- (will log that your plugin is entering this context)
-  CustomHandler.super.body_filter(self)
+	-- Eventually, execute the parent implementation
+	-- (will log that your plugin is entering this context)
+	CustomHandler.super.body_filter(self)
 
-  -- Implement any custom logic here
+	-- Implement any custom logic here
 end
 
 function CustomHandler:log(config)
-  -- Eventually, execute the parent implementation
-  -- (will log that your plugin is entering this context)
-  CustomHandler.super.log(self)
+	-- Eventually, execute the parent implementation
+	-- (will log that your plugin is entering this context)
+	CustomHandler.super.log(self)
 
-  -- Implement any custom logic here
+	-- Implement any custom logic here
 end
 
 -- This module needs to return the created table, so that Kong
