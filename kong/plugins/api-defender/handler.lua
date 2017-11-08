@@ -10,6 +10,7 @@ local access = require "kong.plugins.api-defender.access"
 -- Base Plugin handler, it's only role is to instanciate itself
 -- with a name. The name is your plugin name as it will be printed in the logs.
 function CustomHandler:new()
+	CustomHandler.PRIORITY = 999
 	CustomHandler.super.new(self, "api-defender")
 end
 
