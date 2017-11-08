@@ -28,7 +28,7 @@ local function generate_security(args, first_key, second_key, salt)
 end
 
 local function check_exception(uri, exception)
-	local lower_url = nil
+	local real_url = nil
 	real_url = string.lower(uri) 
 	if utils.table_contains(exception, real_url) then
 		return true
