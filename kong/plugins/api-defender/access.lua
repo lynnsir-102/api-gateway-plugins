@@ -2,7 +2,7 @@ local utils = require 'kong.tools.utils'
 
 local params = require 'kong.lib.params'
 local resData = require 'kong.lib.response'
-local constants = require 'kong.lib.constants'
+local constants = require 'kong.plugins.api-defender.constants'
 local exception = require 'kong.plugins.api-defender.exception'
 
 local access = {}
