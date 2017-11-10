@@ -23,12 +23,12 @@ dependencies = {
 build = {
 	type = "builtin",
 	modules = {
-		["kong.lib.log"] = "./kong/lib/log.lua",
-		["kong.lib.common"] = "./kong/lib/common.lua",
-		["kong.lib.helper"] = "./kong/lib/helper.lua",
-		["kong.lib.params"] = "./kong/lib/params.lua",
-		["kong.lib.request"] = "./kong/lib/request.lua",
-		["kong.lib.response"] = "./kong/lib/response.lua",
-		["kong.lib.constants"] = "./kong/lib/constants.lua"
+		["kong.lib.log"] = "./kong/lib/common/log.lua",
+		["kong.lib.func"] = "./kong/lib/common/func.lua",
+		["kong.lib.params"] = "./kong/lib/http/params.lua",
+		["kong.lib.helper"] = "./kong/lib/common/helper.lua",
+		["kong.lib.request"] = "./kong/lib/http/request.lua",
+		["kong.lib.response"] = "./kong/lib/http/response.lua",
+		["kong.lib.constants"] = "./kong/lib/common/constants.lua"
 	}
 }

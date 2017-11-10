@@ -1,4 +1,4 @@
-local common = require 'kong.lib.common'
+local func = require 'kong.lib.func'
 local resData = require 'kong.lib.response'
 local constants = require 'kong.lib.constants'
 
@@ -22,7 +22,7 @@ local function exec(url, params, httpc)
 		resData(constants.REQUEST_WAS_FAIL)
 	end
 	body = res.body
-	body = common.json_decode(body)
+	body = func.json_decode(body)
 	httpc:close()
 	return body
 end

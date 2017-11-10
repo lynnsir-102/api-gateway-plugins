@@ -3,9 +3,9 @@ local json = require 'json'
 local resData = require 'kong.lib.response'
 local constants = require 'kong.lib.constants'
 
-local common = {}
+local func = {}
 
-function common.json_decode(str)
+function func.json_decode(str)
     local data = nil
     status, data = pcall(function(str) return json.decode(str) end, str)
     if false == status then
@@ -14,4 +14,4 @@ function common.json_decode(str)
     return data
 end
 
-return common
+return func
