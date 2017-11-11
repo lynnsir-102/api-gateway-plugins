@@ -17,6 +17,7 @@ description = {
 dependencies = {
 	'lua ~> 5.1',
 	'luajson ~> 1.3.4-1',
+	'luarestyredis',
 	'lua-resty-http ~> 0.11-0'
 }
 
