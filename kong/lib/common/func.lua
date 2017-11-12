@@ -1,9 +1,9 @@
+local func = {}
+
 local json = require 'json'
 
 local resData = require 'kong.lib.response'
 local constants = require 'kong.lib.constants'
-
-local func = {}
 
 function func.json_decode(str)
     local data = nil

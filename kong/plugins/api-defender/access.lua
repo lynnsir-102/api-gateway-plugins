@@ -1,11 +1,15 @@
+local access = {}
+
 local utils = require 'kong.tools.utils'
 
+local log = require 'kong.lib.log'
 local params = require 'kong.lib.params'
 local resData = require 'kong.lib.response'
 local constants = require 'kong.plugins.api-defender.constants'
 local exception = require 'kong.plugins.api-defender.exception'
 
-local access = {}
+local real_url = nil
+local server_security = nil
 
 local function postern(key, secret, args)
 	if next(args) == nil then
@@ -28,7 +32,6 @@ local function generate_security(args, first_key, second_key, salt)
 end
 
 local function check_exception(uri, exception)
-	local real_url = nil
 	real_url = string.lower(uri) 
 	if utils.table_contains(exception, real_url) then
 		return true
@@ -36,12 +39,30 @@ local function check_exception(uri, exception)
 		return false
 end
 
+local function check_cache()
+	local connections = require 'kong.lib.connections'
+	local red = connections.redis_conn(1)
+	local req_time_prefix = "security:md5:"
+	local req_time_key = req_time_prefix .. ngx.md5(real_url .. server_security)
+	local req_time_val = red:get(req_time_key)
+	if '1' == req_time_val then
+		resData(constants.DEFENDER_MORE)
+	else
+		local ok, err = red:set(req_time_key, '1')
+		if not ok then
+			log.err("Redis err:" .. err)
+		end
+		red:expire(req_time_key, 3600 * 10)
+	end
+end
+
 local function check_security(deal_args, first_key, second_key, salt, security)
-	local server_security = generate_security(deal_args, first_key, second_key, salt)
+	server_security = generate_security(deal_args, first_key, second_key, salt)
 	local client_security = deal_args[security]
 	if server_security ~= client_security then
 		resData(constants.DEFENDER_PARAMS_FAIL)
 	end
+	check_cache()
 	return true
 end
 
