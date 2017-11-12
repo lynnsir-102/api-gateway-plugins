@@ -26,6 +26,7 @@ build = {
 	modules = {
         ["kong.lib.log"] = "./kong/lib/log.lua",
         ["kong.lib.func"] = "./kong/lib/func.lua",
+        ["kong.lib.debug"] = "./kong/lib/debug.lua",
         ["kong.lib.config"] = "./kong/lib/config/config.lua",
         ["kong.lib.params"] = "./kong/lib/http-lib/params.lua",
         ["kong.lib.request"] = "./kong/lib/http-lib/request.lua",
@@ -33,6 +34,6 @@ build = {
         ["kong.lib.response"] = "./kong/lib/http-lib/response.lua",
         ["kong.lib.connections"] = "./kong/lib/conn/connections.lua",
         ["kong.lib.redis_index"] = "./kong/lib/enums/redis_index.lua",
-        ["kong.lib.redis_iresty"] = "./kong/lualib/resty/redis_iresty.lua",
+        ["kong.lib.redis_iresty"] = "./kong/lualib/resty/redis_iresty.lua"
 	}
 }
