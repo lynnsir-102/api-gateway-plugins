@@ -26,10 +26,12 @@ build = {
 	modules = {
 		["kong.lib.log"] = "./kong/lib/common/log.lua",
 		["kong.lib.func"] = "./kong/lib/common/func.lua",
-		["kong.lib.params"] = "./kong/lib/http/params.lua",
-		["kong.lib.helper"] = "./kong/lib/common/helper.lua",
-		["kong.lib.request"] = "./kong/lib/http/request.lua",
-		["kong.lib.response"] = "./kong/lib/http/response.lua",
-		["kong.lib.constants"] = "./kong/lib/common/constants.lua"
+        ["kong.lib.config"] = "./kong/lib/config/config.lua",
+        ["kong.lib.params"] = "./kong/lib/http-lib/params.lua",
+        ["kong.lib.request"] = "./kong/lib/http-lib/request.lua",
+        ["kong.lib.response"] = "./kong/lib/http-lib/response.lua",
+        ["kong.lib.constants"] = "./kong/lib/common/constants.lua",
+        ["kong.lib.connections"] = "./kong/lib/conn/connections.lua",
+        ["kong.lib.redis_iresty"] = "./kong/lualib/resty/redis_iresty.lua"
 	}
 }
