@@ -2,7 +2,7 @@ local params = require 'kong.lib.params'
 local request = require 'kong.lib.request'
 local resData = require 'kong.lib.response'
 
-local constants = require 'kong.plugins.api-polymerization.constants'
+local exception = require 'kong.plugins.api-polymerization.exception'
 local access = {}
 
 local function check(config)
@@ -11,10 +11,10 @@ local function check(config)
 	local types = config.request_config.types
 
 	if ngx.is_subrequest then
-		resData(constants.REQ_WAS_SUBREQUEST)
+		resData(exception.REQ_WAS_SUBREQUEST)
 	end
 	if #names ~= #urls or #names ~= #types then
-		resData(constants.CONFIG_DATA_FAIL)
+		resData(exception.CONFIG_DATA_FAIL)
 	end
 end
 

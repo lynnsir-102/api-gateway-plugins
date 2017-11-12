@@ -1,6 +1,6 @@
 local func = require 'kong.lib.func'
 local resData = require 'kong.lib.response'
-local constants = require 'kong.lib.constants'
+local exception = require 'kong.lib.exception'
 
 local http = nil
 
@@ -19,7 +19,7 @@ local function exec(url, params, httpc)
 	local res, err = httpc:request_uri(url, params)
 	local body = nil
 	if not res then
-		resData(constants.REQUEST_WAS_FAIL)
+		resData(exception.REQUEST_WAS_FAIL)
 	end
 	body = res.body
 	body = func.json_decode(body)

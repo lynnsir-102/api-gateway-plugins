@@ -29,9 +29,10 @@ build = {
         ["kong.lib.config"] = "./kong/lib/config/config.lua",
         ["kong.lib.params"] = "./kong/lib/http-lib/params.lua",
         ["kong.lib.request"] = "./kong/lib/http-lib/request.lua",
-        ["kong.lib.constants"] = "./kong/lib/enums/constants.lua",
+        ["kong.lib.exception"] = "./kong/lib/enums/exception.lua",
         ["kong.lib.response"] = "./kong/lib/http-lib/response.lua",
         ["kong.lib.connections"] = "./kong/lib/conn/connections.lua",
-        ["kong.lib.redis_iresty"] = "./kong/lualib/resty/redis_iresty.lua"
+        ["kong.lib.redis_index"] = "./kong/lib/enums/redis_index.lua",
+        ["kong.lib.redis_iresty"] = "./kong/lualib/resty/redis_iresty.lua",
 	}
 }

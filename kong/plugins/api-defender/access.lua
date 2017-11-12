@@ -5,7 +5,8 @@ local utils = require 'kong.tools.utils'
 local log = require 'kong.lib.log'
 local params = require 'kong.lib.params'
 local resData = require 'kong.lib.response'
-local constants = require 'kong.plugins.api-defender.constants'
+local redis_index = require 'kong.lib.redis_index'
+local special = require 'kong.plugins.api-defender.special'
 local exception = require 'kong.plugins.api-defender.exception'
 
 local real_url = nil
@@ -27,13 +28,13 @@ local function generate_security(args, first_key, second_key, salt)
 	if args and args[first_key] and args[second_key] then
 		return ngx.md5(args[first_key] .. args[second_key] .. salt)
 	else
-		resData(constants.DEFENDER_PARAMS_LACKING)
+		resData(exception.DEFENDER_PARAMS_LACKING)
 	end
 end
 
-local function check_exception(uri, exception)
+local function check_special(uri, special)
 	real_url = string.lower(uri) 
-	if utils.table_contains(exception, real_url) then
+	if utils.table_contains(special, real_url) then
 		return true
 	end
 		return false
@@ -41,12 +42,12 @@ end
 
 local function check_cache()
 	local connections = require 'kong.lib.connections'
-	local red = connections.redis_conn(1)
+	local red = connections.redis_conn(redis_index.API_DEFENDER)
 	local req_time_prefix = "security:md5:"
 	local req_time_key = req_time_prefix .. ngx.md5(real_url .. server_security)
 	local req_time_val = red:get(req_time_key)
 	if '1' == req_time_val then
-		resData(constants.DEFENDER_MORE)
+		resData(exception.DEFENDER_MORE)
 	else
 		local ok, err = red:set(req_time_key, '1')
 		if not ok then
@@ -60,7 +61,7 @@ local function check_security(deal_args, first_key, second_key, salt, security)
 	server_security = generate_security(deal_args, first_key, second_key, salt)
 	local client_security = deal_args[security]
 	if server_security ~= client_security then
-		resData(constants.DEFENDER_PARAMS_FAIL)
+		resData(exception.DEFENDER_PARAMS_FAIL)
 	end
 	check_cache()
 	return true
@@ -79,7 +80,7 @@ function access.execute(config)
 	if true == postern(postern_key, postern_secret, deal_args) then
 		return
 	end
-	if true == check_exception(uri, exception) then
+	if true == check_special(uri, special) then
 		return
 	end
 	if true == check_security(deal_args, first_key, second_key, salt, security) then

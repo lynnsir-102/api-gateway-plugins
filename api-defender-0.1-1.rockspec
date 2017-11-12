@@ -28,7 +28,7 @@ build = {
 		["kong.plugins."..pluginName..".access"] = "./kong/plugins/"..pluginName.."/access.lua",
 		["kong.plugins."..pluginName..".schema"] = "./kong/plugins/"..pluginName.."/schema.lua",
 		["kong.plugins."..pluginName..".handler"] = "./kong/plugins/"..pluginName.."/handler.lua",
-		["kong.plugins."..pluginName..".constants"] = "./kong/plugins/"..pluginName.."/constants.lua",
-		["kong.plugins."..pluginName..".exception"] = "./kong/plugins/"..pluginName.."/exception.lua"
+		["kong.plugins."..pluginName..".special"] = "./kong/plugins/"..pluginName.."/special.lua",
+		["kong.plugins."..pluginName..".exception"] = "./kong/plugins/"..pluginName.."/exception.lua",
 	}
 }

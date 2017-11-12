@@ -1,7 +1,7 @@
 local json = require 'json'
 
 local resData = require 'kong.lib.response'
-local constants = require 'kong.lib.constants'
+local exception = require 'kong.lib.exception'
 
 local ngxReq = ngx.req
 
@@ -19,7 +19,7 @@ local function exec()
 		return { args = args, body = {} }
 	end
 	if headers['Content-Type'] == nil then
-		resData(constants.CONTENT_TYPE_WAS_NIL)
+		resData(exception.CONTENT_TYPE_WAS_NIL)
 	end
 	if string.find(headers['Content-Type'], 'application/x%-www%-form%-urlencoded') or
 	string.find(headers['Content-Type'], 'multipart/form%-data') then
@@ -28,7 +28,7 @@ local function exec()
 		body = json.decode(ngxReq.get_body_data())
 	end
 	if type(args) ~= 'table' or type(body) ~= 'table' then
-		resData(constants.PARAMS_WAS_FAIL)
+		resData(exception.PARAMS_WAS_FAIL)
 	end
 	return { args = args, body = body }
 end
