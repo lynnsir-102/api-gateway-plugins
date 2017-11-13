@@ -21,9 +21,13 @@ local function exec()
 	if headers['Content-Type'] == nil then
 		resData(exception.CONTENT_TYPE_WAS_NIL)
 	end
-	if string.find(headers['Content-Type'], 'application/x%-www%-form%-urlencoded') or
-	string.find(headers['Content-Type'], 'multipart/form%-data') then
+	if string.find(headers['Content-Type'], 'application/x%-www%-form%-urlencoded') then
 		body = ngxReq.get_post_args()
+	elseif string.find(headers['Content-Type'], 'multipart/form%-data') then
+		local body_data = ngx.req.get_body_data()
+		local multipart = require("kong.lib.multipart")
+		local multipart_data = multipart(body_data, headers["content-type"])
+		body = multipart_data:get_all()
 	else
 		body = json.decode(ngxReq.get_body_data())
 	end
