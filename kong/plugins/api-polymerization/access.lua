@@ -1,3 +1,5 @@
+local utils = require 'kong.tools.utils'
+
 local params = require 'kong.lib.params'
 local request = require 'kong.lib.request'
 local resData = require 'kong.lib.response'
@@ -20,13 +22,13 @@ end
 
 local function init(config, args, body)
 	local resps = {}
+	local all_args = utils.table_merge(args,body)
 
 	for i, v in ipairs(config.request_config.names) do
 		local name = config.request_config.names[i]
 		local url = config.request_config.urls[i]
 		local method = config.request_config.methods[i]
 		local type = config.request_config.types[i]
-		local subData = body[name]
 		local options = {}
 
 		options['method'] = method
@@ -42,10 +44,10 @@ local function init(config, args, body)
 		end
 
 		if(method == 'GET') then
-			resps[name] = request(url..'?'..ngx.encode_args(args), options)
+			resps[name] = request(url .. '?' .. ngx.encode_args(all_args), options)
 		end
 		if(method == 'POST') then
-			options['body'] = ngx.encode_args(body)
+			options['body'] = ngx.encode_args(all_args)
 			resps[name] = request(url, options)
 		end
 		options = {}

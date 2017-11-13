@@ -57,9 +57,9 @@ local function check_cache()
 	end
 end
 
-local function check_security(deal_args, first_key, second_key, salt, security)
-	server_security = generate_security(deal_args, first_key, second_key, salt)
-	local client_security = deal_args[security]
+local function check_security(args, first_key, second_key, salt, security)
+	server_security = generate_security(args, first_key, second_key, salt)
+	local client_security = args[security]
 	if server_security ~= client_security then
 		resData(exception.DEFENDER_PARAMS_FAIL)
 	end
@@ -71,19 +71,19 @@ function access.execute(config)
 	local params = params()
 	local args, body = params.args, params.body
 	local uri = ngx.var.uri
-	local deal_args = utils.table_merge(args,body)
+	local all_args = utils.table_merge(args,body)
 
 	local salt, security = config.salt_value, config.security_key_name
 	local first_key, second_key = config.first_key_name, config.second_key_name
 	local postern_key, postern_secret = config.postern_key_name, config.postern_secret_value
 
-	if true == postern(postern_key, postern_secret, deal_args) then
+	if true == postern(postern_key, postern_secret, all_args) then
 		return
 	end
 	if true == check_special(uri, special) then
 		return
 	end
-	if true == check_security(deal_args, first_key, second_key, salt, security) then
+	if true == check_security(all_args, first_key, second_key, salt, security) then
 		return
 	end
 end
