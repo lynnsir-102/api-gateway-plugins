@@ -1,0 +1,138 @@
+local pl_string = require 'pl.stringx'
+
+local resData = require 'kong.lib.response'
+local exception = require 'kong.lib.exception'
+
+local MultipartData = {}
+MultipartData.__index = MultipartData
+
+setmetatable(MultipartData, {
+	__call = function (cls, ...)
+		return cls.new(...)
+	end,
+})
+
+local function is_header(value)
+	return string.match(value, "(%S+):%s*(%S+)")
+end
+
+local function table_size(t)
+	local res = 0
+	if t then
+		for _,_ in pairs(t) do
+			res = res + 1
+		end
+	end
+	return res
+end
+
+local function decode(body, boundary)
+	if boundary == nil then 
+		resData(exception.BOUNDARY_WAS_NIL)
+	end
+	local result = {
+		data = {},
+		indexes = {}
+	}
+
+	local part_headers = {}
+	local part_index = 1
+	local part_name, part_value
+
+	for line in body:gmatch("[^\r\n]+") do
+		if pl_string.startswith(line, "--"..boundary) then
+			if part_name ~= nil then
+				result.data[part_index] = {
+					name = part_name,
+					headers = part_headers,
+					value = part_value
+				}
+
+				result.indexes[part_name] = part_index
+
+				part_headers = {}
+				part_value = nil
+				part_name = nil
+				part_index = part_index + 1
+			end
+		elseif pl_string.startswith(string.lower(line), "content-disposition") then
+			local parts = pl_string.split(line, ";")
+			for _,v in ipairs(parts) do
+				if not is_header(v) then
+					local current_parts = pl_string.split(pl_string.strip(v), "=")
+					if string.lower(table.remove(current_parts, 1)) == "name" then
+						 local current_value = pl_string.strip(table.remove(current_parts, 1))
+						 part_name = string.sub(current_value, 2, string.len(current_value) - 1)
+					end
+				end
+			end
+			table.insert(part_headers, line)
+		else
+			if is_header(line) then
+				table.insert(part_headers, line)
+			else
+				part_value = (part_value and part_value.."\r\n" or "")..line
+			end
+		end
+	end
+	return result
+end
+
+local function encode(t, boundary)
+	local result = ""
+
+	for _, v in ipairs(t.data) do
+		if v.value then
+			local part = "--"..boundary.."\r\n"
+			for _, header in ipairs(v.headers) do
+				part = part..header.."\r\n"
+			end
+			result = result..part.."\r\n"..v.value.."\r\n"
+		end
+	end
+	result = result.."--"..boundary.."--"
+
+	return result
+end
+
+function MultipartData.new(data, content_type)
+	local instance = {}
+	setmetatable(instance, MultipartData)
+	if content_type then
+		instance._boundary = string.match(content_type, ";%s*boundary=(%S+)")
+	end
+	instance._data = decode(data or "", instance._boundary)
+	return instance
+end
+
+function MultipartData:get(name)
+	return self._data.data[self._data.indexes[name]]
+end
+
+function MultipartData:get_all(name)
+	local result = {}
+	for k, v in pairs(self._data.indexes) do
+		result[k] = self._data.data[v].value
+	end
+	return result
+end
+
+function MultipartData:set_simple(name, value)
+	self._data.data[table_size(self._data.indexes) + 1] = {
+		name = name,
+		value = value,
+		headers = { "Content-Disposition: form-data; name=\""..name.."\"" }
+	}
+end
+
+function MultipartData:delete(name)
+	if self._data.indexes[name] then
+		self._data.data[self._data.indexes[name]].value = nil
+	end
+end
+
+function MultipartData:tostring()
+	return encode(self._data, self._boundary)
+end
+
+return MultipartData
