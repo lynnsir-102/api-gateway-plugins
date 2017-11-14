@@ -1,9 +1,8 @@
-local pl_string = require 'pl.stringx'
+local MultipartData = {}
 
 local resData = require 'kong.lib.response'
 local exception = require 'kong.lib.exception'
 
-local MultipartData = {}
 MultipartData.__index = MultipartData
 
 setmetatable(MultipartData, {
@@ -30,6 +29,7 @@ local function decode(body, boundary)
     if boundary == nil then 
         resData(exception.BOUNDARY_WAS_NIL)
     end
+    
     local result = {
         data = {}, 
         indexes = {}
@@ -37,31 +37,33 @@ local function decode(body, boundary)
     
     local part_headers = {}
     local part_index = 1
-    local part_name, part_value
+    local part_name, part_value, part_value_ct
+    part_value = {}
+    part_value_ct = 0
     
     for line in body:gmatch("[^\r\n]+") do
-        if pl_string.startswith(line, "--" .. boundary) then
+        if line:sub(1, 2) == "--" and line:sub(3, #boundary + 2) == boundary then
             if part_name ~= nil then
                 result.data[part_index] = {
                     name = part_name, 
                     headers = part_headers, 
-                    value = part_value
+                    value = table.concat(part_value, "\r\n")
                 }
                 
                 result.indexes[part_name] = part_index
                 
                 part_headers = {}
-                part_value = nil
+                part_value = {}
+                part_value_ct = 0
                 part_name = nil
                 part_index = part_index + 1
             end
-        elseif pl_string.startswith(string.lower(line), "content-disposition") then
-            local parts = pl_string.split(line, ";")
-            for _, v in ipairs(parts) do
-                if not is_header(v) then
-                    local current_parts = pl_string.split(pl_string.strip(v), "=")
-                    if string.lower(table.remove(current_parts, 1)) == "name" then
-                        local current_value = pl_string.strip(table.remove(current_parts, 1))
+        elseif line:sub(1, 19):lower() == "content-disposition" then
+            for v in line:gmatch("[^;]+") do
+                if not is_header(v) then 
+                    local pos = v:match("^%s*[Nn][Aa][Mm][Ee]=()")
+                    if pos then
+                        local current_value = v:match("^%s*([^=]*)", pos):gsub("%s*$", "")
                         part_name = string.sub(current_value, 2, string.len(current_value) - 1)
                     end
                 end
@@ -71,7 +73,8 @@ local function decode(body, boundary)
             if is_header(line) then
                 table.insert(part_headers, line)
             else
-                part_value = (part_value and part_value .. "\r\n" or "") .. line
+                part_value_ct = part_value_ct + 1
+                part_value[part_value_ct] = line
             end
         end
     end
