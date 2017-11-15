@@ -14,10 +14,6 @@ local ngxReq = ngx.req
 local real_url = nil
 local server_security = nil
 
-local function init()
-    ngxReq.read_body()
-end
-
 local function postern(key, secret, args)
     if next(args) == nil then
         return false
@@ -78,7 +74,7 @@ function access.execute(config)
     local headers = ngxReq.get_headers()
     
     if "POST" == ngxReq.get_method() and string.find(headers['Content-Type'], 'multipart/form%-data') then
-        init()
+        ngxReq.read_body()
         local body_data = ngx.req.get_body_data()
         local multipart = require("kong.lib.multipart")
         local multipart_data = multipart(body_data, headers["content-type"])
