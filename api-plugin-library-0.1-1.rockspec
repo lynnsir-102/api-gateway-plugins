@@ -38,7 +38,7 @@ build = {
 		["kong.lib.redis_iresty"] = "./kong/lualib/redis_iresty.lua",
 		
 		["kong.lib.exception"] = "./kong/lib/enums/exception.lua",
-		["kong.lib.reids_key"] = "./kong/lib/enums/reids_key.lua",
+		["kong.lib.redis_key"] = "./kong/lib/enums/redis_key.lua",
 		["kong.lib.redis_index"] = "./kong/lib/enums/redis_index.lua",
 		
 		["kong.lib.connections"] = "./kong/lib/conn/connections.lua",
