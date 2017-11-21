@@ -1,4 +1,5 @@
 return {
+    no_consumer = false, 
     fields = {
         defender_config = {
             type = 'table', 
@@ -17,7 +18,7 @@ return {
             type = 'table', 
             schema = {
                 fields = {
-                    limit_key = {type = "string", required = true}, 
+                    limit_key = {type = "string", required = false}, 
                     limit_num_per_second = {type = "number", required = false, default = 5}
                 }
             }

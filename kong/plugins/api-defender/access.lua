@@ -21,7 +21,8 @@ local function get_all_args()
     local all_args = {}
     local headers = ngxReq.get_headers()
     
-    if "POST" == ngxReq.get_method() and string.find(headers['Content-Type'], 'multipart/form%-data') then
+    if "POST" == ngxReq.get_method() and headers['Content-Type'] and 
+        string.find(headers['Content-Type'], 'multipart/form%-data') then
         ngxReq.read_body()
         local body_data = ngx.req.get_body_data()
         local multipart = require("kong.lib.multipart")
