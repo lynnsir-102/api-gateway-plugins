@@ -47,9 +47,9 @@ local function check_postern(key, secret)
     return false
 end
 
-local function check_limit(limit_key, num)
+local function check_limit(red, limit_key, num)
     if args and args[limit_key] then
-        local req_limit_key = redis_index.REQUEST_LIMIT .. ngx.md5(real_url .. args[limit_key])
+        local req_limit_key = redis_key.REQUEST_LIMIT .. ngx.md5(real_url .. args[limit_key])
         local req_limit_val, err = red:get(req_limit_key)
         if err then
             log.err("Redis get limit value err:" .. err)
@@ -68,7 +68,6 @@ local function check_limit(limit_key, num)
             end
             red:expire(req_limit_key, 1)
         end
-        
     end
 end
 
@@ -85,7 +84,6 @@ local function check_filter(red)
         red:expire(req_filter_key, 3600 * 10)
     end
 end
-
 
 local function check_special(uri, special)
     real_url = string.lower(uri) 
@@ -107,12 +105,13 @@ local function check_cache(limit_key, limit_num)
     local connections = require 'kong.lib.connections'
     local red = connections.redis_conn(redis_index.API_DEFENDER)
     
-    check_limit(red)
-    check_filter(red, limit_key, limit_num)
+    if limit_key ~= '' then
+        check_limit(red, limit_key, limit_num)
+    end
+    check_filter(red)
 end
 
-
-local function check_security(first_key, second_key, salt, security)
+local function check_security(first_key, second_key, salt, security, limit_key, limit_num)
     server_security = generate_security(first_key, second_key, salt)
     local client_security = args[security]
     if server_security ~= client_security then
@@ -130,7 +129,7 @@ function access.execute(config)
     local defender_config = config.defender_config
     
     local limit_key, limit_num = limit_config.limit_key, limit_config.limit_num_per_second
-    
+
     local salt, security = defender_config.salt_value, defender_config.security_key_name
     local first_key, second_key = defender_config.first_key_name, defender_config.second_key_name
     local postern_key, postern_secret = defender_config.postern_key_name, defender_config.postern_secret_value
@@ -141,11 +140,9 @@ function access.execute(config)
     if true == check_special(uri, special) then
         return
     end
-    
-    if true == check_security(first_key, second_key, salt, security) then
+    if true == check_security(first_key, second_key, salt, security, limit_key, limit_num) then
         return
     end
 end
 
 return access
-
